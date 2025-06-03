@@ -150,15 +150,6 @@ public static class ProviderNavigator
         return typeArgument?.Value is ITypeofExpression typeofExpression ? typeofExpression.ArgumentType : null;
     }
 
-    // private static IEnumerable<IOccurrence>
-    //     GetProvidedThroughField(IReference[] references, IType valueType) =>
-    //     references
-    //         .SelectNotNull(r => r.GetMultipleFieldDeclaration())
-    //         .Where(r => r.HasType(valueType))
-    //         .SelectNotNull(r => r.Declarators.FirstOrDefault()?.DeclaredElement)
-    //         .Select(r => new ProvidedInOccurence(r))
-    //         .ToList();
-
 
     [CanBeNull]
     private static ITypeElement GetCachedAttributeType(ISymbolScope scope) =>
@@ -169,45 +160,4 @@ public static class ProviderNavigator
 
     public static ITypeElement GetResolvedAttributeType(ISymbolScope scope) =>
         scope.GetTypeElementsByCLRName(ResolvedAttributeClrName).FirstOrDefault();
-
-    private static IMultipleFieldDeclaration GetMultipleFieldDeclaration(this IReference reference) =>
-        GetMultipleFieldDeclaration(reference.GetTreeNode());
-
-    [CanBeNull]
-    private static IMultipleFieldDeclaration GetMultipleFieldDeclaration([CanBeNull] this ITreeNode node)
-    {
-        while (node != null)
-        {
-            if (node is IMultipleFieldDeclaration declaration)
-                return declaration;
-
-            node = node.Parent;
-        }
-
-        return null;
-    }
-
-    [CanBeNull]
-    private static IClassDeclaration GetClassDeclaration(this IReference reference)
-    {
-        var node = reference.GetTreeNode();
-
-        while (node != null)
-        {
-            if (node is IClassDeclaration declaration)
-                return declaration;
-
-            node = node.Parent;
-        }
-
-        return null;
-    }
-
-    // private static bool HasType(this IMultipleFieldDeclaration field, IType type) =>
-    //     field.
-    //     field.TypeUsage is IUserTypeUsage userTypeUsage &&
-    //     userTypeUsage.ScalarTypeName.QualifiedName == type.QualifiedName;
-
-    private static bool HasType(this IClassDeclaration classDeclaration, IReferenceName type) =>
-        classDeclaration.NameIdentifier.Name == type.NameIdentifier.Name;
 }
