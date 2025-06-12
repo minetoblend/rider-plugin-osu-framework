@@ -8,8 +8,8 @@
     <Title>OsuFramework</Title>
     <Description>Description</Description>
 
-    <Authors>Author</Authors>
-    <Copyright>Copyright $([System.DateTime]::Now.Year) Maintainers of OsuFramework</Copyright>
+    <Authors>Marvin Schürz</Authors>
+    <Copyright>Copyright $([System.DateTime]::Now.Year) Marvin Schürz</Copyright>
     <PackageTags>resharper plugin</PackageTags>
 
     <PackageProjectUrl></PackageProjectUrl>
