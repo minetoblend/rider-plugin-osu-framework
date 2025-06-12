@@ -37,6 +37,8 @@ public class ProvidersCodeInsightProvider(
 {
     public override string ProviderId => nameof(ProvidersCodeInsightProvider);
 
+    public override string DisplayName => "Providers";
+
     public override ICollection<CodeVisionRelativeOrdering> RelativeOrderings => [new CodeVisionRelativeOrderingLast()];
 
     protected override IconId IconId => CodeInsightsThemedIcons.InsightReference.Id;
@@ -44,7 +46,7 @@ public class ProvidersCodeInsightProvider(
     public override bool IsAvailableFor(IDeclaredElement declaredElement, ElementId? elementId) =>
         declaredElement is IProperty property && property.HasResolvedAttribute();
 
-    protected override string Noun(IDeclaredElement element, int count) => count == 1 ? "Provider" : "Providers";
+    protected override string Noun(IDeclaredElement element, int count) => count == 1 ? "provider" : "providers";
 
 
     protected override int GetBaseCount(SolutionAnalysisService swa, IGlobalUsageChecker usageChecker,
