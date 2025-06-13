@@ -7,6 +7,7 @@ using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.Occurrences;
 using JetBrains.ReSharper.Feature.Services.Tree;
 using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Resources.Shell;
 
 namespace ReSharperPlugin.OsuFramework;
@@ -23,8 +24,8 @@ public sealed class ProvidedInOccurenceBrowserDescriptor : OccurrenceBrowserDesc
     {
         _model = new TreeSectionModel();
         DrawElementExtensions = true;
-
-        Title.Value = "Value provided in";
+        
+        Title.Value = "Providers for ";
 
         using (ReadLockCookie.Create())
         {

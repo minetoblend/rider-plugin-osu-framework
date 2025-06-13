@@ -40,7 +40,7 @@ public static class ProviderTypeUtils
     public static IList<IDeclaration> GetDeclarations(this IType type) =>
         type?.GetScalarType()?.Resolve().DeclaredElement?.GetDeclarations() ?? ImmutableList<IDeclaration>.Empty;
 
-    public static bool GetProvidedType(this IAttribute attribute, 
+    public static bool GetProvidedType(this IAttribute attribute,
         [MaybeNullWhen(false)] out IType type,
         [MaybeNullWhen(false)] out IDeclaration declaration,
         out bool isExplicit)
@@ -78,12 +78,19 @@ public static class ProviderTypeUtils
         isExplicit = false;
         return type != null;
     }
-    
+
     [CanBeNull]
-    public static IType GetProvidedType(this IPropertyDeclaration declaration)
+    public static IType GetResolvedType(this IPropertyDeclaration declaration)
     {
-        return !declaration.Attributes.Any(attr => attr.Name.ShortName == "Resolved")
-            ? null
-            : declaration.Type;
+        var attribute = declaration.Attributes.FirstOrDefault(attr =>
+            attr.GetAttributeInstance().GetAttributeType().GetClrName().Equals(ResolvedAttributeClrName));
+
+        if (attribute == null)
+            return null;
+
+
+        attribute.GetProvidedType(out IType type, out _, out _);
+
+        return type;
     }
 }

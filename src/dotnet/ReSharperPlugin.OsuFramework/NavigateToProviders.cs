@@ -31,7 +31,7 @@ public class NavigateToProviders : INavigateFromHereProvider
         if (declaration == null)
             yield break;
 
-        var resolvedType = declaration.GetProvidedType();
+        var resolvedType = declaration.GetResolvedType();
         if (resolvedType == null)
             yield break;
 
@@ -39,7 +39,7 @@ public class NavigateToProviders : INavigateFromHereProvider
         yield return new ContextNavigation("Providers", null, NavigationActionGroup.Blessed, () =>
         {
             var occurrences = ProviderFinder.SearchForProviders(resolvedType, NullProgressIndicator.Create())
-                .Select(s => (IOccurrence)new ProvidedInOccurence(s))
+                .Select(s => (IOccurrence)new ProvidedInOccurrence(s))
                 .ToList();
 
             var solution = declaration.GetSolution();

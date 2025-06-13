@@ -80,22 +80,24 @@ public static class ProviderFinder
                 Declaration = declaration,
             };
 
-            if (declaration is IClassDeclaration { DeclaredElement.ContainingType: { } typeElement } classDeclaration)
+            if (declaration is IClassDeclaration { DeclaredElement: { } typeElement })
             {
                 var elements = new List<ITypeElement>();
 
-                var symbolScope = typeElement.GetPsiServices().Symbols.GetSymbolScope(LibrarySymbolScope.FULL, true);
+                var symbolScope = typeElement.GetPsiServices().Symbols
+                    .GetSymbolScope(LibrarySymbolScope.FULL, true);
 
                 using var subProgress = progressIndicator.CreateSubProgress(0.05);
                 declaration.GetPsiServices().ParallelFinder
-                    .FindInheritors(typeElement, symbolScope, elements.ConsumeDeclaredElements(), subProgress);
+                    .FindInheritors(typeElement, symbolScope, elements.ConsumeDeclaredElements(),
+                        subProgress);
 
                 foreach (var element in elements)
                 {
-                    var elementDeclaration = element.GetDeclarations().FirstOrDefault();
-                    if (elementDeclaration != null)
+                    if (element.GetDeclarations().FirstOrDefault() is IClassDeclaration elementDeclaration)
                     {
-                        yield return new ProvideInformation(elementDeclaration, ProvideType.InheritedCachedAttribute)
+                        yield return new ProvideInformation(elementDeclaration.NameIdentifier,
+                            ProvideType.InheritedCachedAttribute)
                         {
                             Explicit = isExplicit,
                             Declaration = elementDeclaration

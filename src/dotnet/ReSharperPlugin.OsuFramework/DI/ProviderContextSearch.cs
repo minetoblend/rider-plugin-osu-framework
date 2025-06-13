@@ -17,17 +17,16 @@ namespace ReSharperPlugin.OsuFramework.Providers;
 [ShellFeaturePart(Instantiation.DemandAnyThreadSafe)]
 public class ProviderContextSearch : IContextSearch
 {
-    public bool IsAvailable(IDataContext dataContext) => CreateContext(dataContext) != null;
+    public bool IsAvailable(IDataContext dataContext) => createContext(dataContext) != null;
 
     public bool IsContextApplicable(IDataContext dataContext) =>
         ContextNavigationUtil.CheckDefaultApplicability<CSharpLanguage>(dataContext);
 
     [CanBeNull]
-    private ProviderSearchContext CreateContext(IDataContext context)
+    private ProviderSearchContext createContext(IDataContext context)
     {
-        var node = context.GetSelectedTreeNode<ITreeNode>();
-
-        var property = ContextNavigationUtil.GetSelectedLanguageSpecificTreeNode<IPropertyDeclaration, CSharpLanguage>(context);
+        var property =
+            ContextNavigationUtil.GetSelectedLanguageSpecificTreeNode<IPropertyDeclaration, CSharpLanguage>(context);
 
         var attribute = property?.DeclaredElement
             ?.GetAttributeInstances(
@@ -43,12 +42,12 @@ public class ProviderContextSearch : IContextSearch
         if (type == null)
             return null;
 
-        return new ProviderSearchContext(type, property, type.GetPsiServices().Solution);
+        return new ProviderSearchContext(type, property, type.GetPsiServices().Solution, property.Language);
     }
 
     public ProviderSearchRequest CreateSearchRequest(IDataContext dataContext)
     {
-        var context = CreateContext(dataContext);
+        var context = createContext(dataContext);
 
         return context != null ? new ProviderSearchRequest(context) : null;
     }

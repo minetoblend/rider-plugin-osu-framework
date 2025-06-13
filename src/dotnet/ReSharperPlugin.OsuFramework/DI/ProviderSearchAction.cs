@@ -11,14 +11,4 @@ namespace ReSharperPlugin.OsuFramework.Providers;
 public class ProviderSearchAction : ContextNavigationActionBase<ProviderContextNavigationProvider>
 {
     protected override RichText Caption => "Show Providers";
-
-    public override bool Update(IDataContext context, ActionPresentation presentation, DelegateUpdate nextUpdate)
-    {
-        return base.Update(context, presentation, nextUpdate);
-    }
-
-    protected override ICollection<ProviderContextNavigationProvider> GetWorkflowProviders()
-    {
-        return base.GetWorkflowProviders();
-    }
 }

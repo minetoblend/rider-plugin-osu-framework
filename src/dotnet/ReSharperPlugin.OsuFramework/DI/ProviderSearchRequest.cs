@@ -19,7 +19,8 @@ public sealed class ProviderSearchRequest(ProviderSearchContext context) : Searc
     public override ICollection<IOccurrence> Search(IProgressIndicator progressIndicator)
     {
         return ProviderFinder.SearchForProviders(context.Type, progressIndicator)
-            .Select(s => (IOccurrence)new ProvidedInOccurence(s))
+            .Sort((a,b) => a.Type.CompareTo(b.Type))
+            .Select(s => (IOccurrence)new ProvidedInOccurrence(s))
             .ToList();
     }
 

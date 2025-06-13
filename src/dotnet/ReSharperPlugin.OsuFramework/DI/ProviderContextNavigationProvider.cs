@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Application;
@@ -6,8 +7,13 @@ using JetBrains.Application.Parts;
 using JetBrains.Application.Threading;
 using JetBrains.Application.UI.Tooltips;
 using JetBrains.Lifetimes;
+using JetBrains.ProjectModel;
+using JetBrains.ProjectModel.DataContext;
+using JetBrains.ReSharper.Feature.Services.Navigation;
 using JetBrains.ReSharper.Feature.Services.Navigation.ContextNavigation;
 using JetBrains.ReSharper.Feature.Services.Occurrences;
+using JetBrains.ReSharper.Feature.Services.Tree;
+using JetBrains.ReSharper.Features.Navigation.Features.FindExtensions;
 using JetBrains.TextControl;
 using JetBrains.TextControl.DataContext;
 using JetBrains.UI.RichText;
@@ -52,14 +58,22 @@ public class ProviderContextNavigationProvider
         }
         else
         {
-            host.ShowContextPopupMenu(
-                dataContext,
-                occurrences,
-                () => new ProviderSearchDescriptor(request, occurrences),
-                OccurrencePresentationOptions.DefaultOptions,
-                true,
-                request.Title
-            );
+            int num = occurrences.Count;
+            OccurrencePopupMenu instance =
+                OccurrencePopupMenu.GetInstance(dataContext.GetData(ProjectModelDataConstants.SOLUTION));
+
+            OccurrencePopupMenuOptions popupMenuOptions = new OccurrencePopupMenuOptions(request.Title, false,
+                OccurrencePresentationOptions.DefaultOptions, null, DescriptorBuilder);
+            popupMenuOptions.ViewportSize = Math.Min(num + 3, popupMenuOptions.ViewportSize);
+            IDataContext context = dataContext;
+            ICollection<IOccurrence> items = occurrences;
+            OccurrencePopupMenuOptions options = popupMenuOptions;
+            instance.ShowMenuFromTextControl(context, items, options);
+        }
+
+        ProviderSearchDescriptor DescriptorBuilder()
+        {
+            return new ProviderSearchDescriptor(request, occurrences);
         }
     }
 
