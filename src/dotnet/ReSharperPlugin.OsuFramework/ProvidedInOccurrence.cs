@@ -57,9 +57,4 @@ public class ProvidedInOccurrence : ReferenceOccurrence
     }
 
     public ProvideType ProvideType => provideInformation.Type;
-
-    public override string GetDisplayNameText()
-    {
-        return base.GetDisplayNameText();
-    }
 }
