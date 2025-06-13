@@ -4,6 +4,7 @@ using System.Linq;
 using JetBrains.Application;
 using JetBrains.Application.DataContext;
 using JetBrains.Application.Parts;
+using JetBrains.Application.Progress;
 using JetBrains.Application.UI.Actions.ActionManager;
 using JetBrains.IDE.UI;
 using JetBrains.Metadata.Reader.Impl;
@@ -63,7 +64,7 @@ public class ProvidersCodeInsightProvider(
         if (type == null)
             return 0;
 
-        return ProviderFinder.SearchForProviders(type, null).Count();
+        return ProviderFinder.SearchForProviders(type, NullProgressIndicator.Create()).Count();
     }
 
     private static readonly ClrTypeName ResolvedAttributeClrName = new("osu.Framework.Allocation.ResolvedAttribute");

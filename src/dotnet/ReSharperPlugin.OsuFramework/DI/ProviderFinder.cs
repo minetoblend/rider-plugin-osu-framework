@@ -25,9 +25,13 @@ public static class ProviderFinder
     private static readonly ClrTypeName DependencyContainerClrName =
         new("osu.Framework.Allocation.DependencyContainer");
 
+    private static readonly ClrTypeName BackgroundDependencyLoaderAttributeClrName =
+        new("osu.Framework.Allocation.BackgroundDependencyLoaderAttribute");
+
+
     public static IEnumerable<ProvideInformation> SearchForProviders(
-        IType expectedType,
-        [CanBeNull] IProgressIndicator progressIndicator = null
+        [NotNull] IType expectedType,
+        [NotNull] IProgressIndicator progressIndicator
     )
     {
         progressIndicator ??= NullProgressIndicator.Create();
@@ -80,9 +84,11 @@ public static class ProviderFinder
             {
                 var elements = new List<ITypeElement>();
 
+                var symbolScope = typeElement.GetPsiServices().Symbols.GetSymbolScope(LibrarySymbolScope.FULL, true);
+
                 using var subProgress = progressIndicator.CreateSubProgress(0.05);
                 declaration.GetPsiServices().ParallelFinder
-                    .FindInheritors(typeElement, elements.ConsumeDeclaredElements(), subProgress);
+                    .FindInheritors(typeElement, symbolScope, elements.ConsumeDeclaredElements(), subProgress);
 
                 foreach (var element in elements)
                 {
@@ -149,6 +155,11 @@ public static class ProviderFinder
 
     [CanBeNull]
     private static ITypeElement getResolvedAttributeType(IPsiServices psiServices) =>
+        psiServices.Symbols.GetSymbolScope(LibrarySymbolScope.FULL, true)
+            .GetTypeElementsByCLRName(CachedAttributeClrName).FirstOrDefault();
+
+    [CanBeNull]
+    private static ITypeElement getBackgroundDependencyLoaderAttributeType(IPsiServices psiServices) =>
         psiServices.Symbols.GetSymbolScope(LibrarySymbolScope.FULL, true)
             .GetTypeElementsByCLRName(CachedAttributeClrName).FirstOrDefault();
 

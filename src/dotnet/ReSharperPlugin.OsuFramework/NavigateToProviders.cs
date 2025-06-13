@@ -4,6 +4,7 @@ using System.Linq;
 using JetBrains.Annotations;
 using JetBrains.Application.DataContext;
 using JetBrains.Application.Parts;
+using JetBrains.Application.Progress;
 using JetBrains.Application.UI.DataContext;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.CSharp.CompleteStatement;
@@ -37,7 +38,7 @@ public class NavigateToProviders : INavigateFromHereProvider
 
         yield return new ContextNavigation("Providers", null, NavigationActionGroup.Blessed, () =>
         {
-            var occurrences = ProviderFinder.SearchForProviders(resolvedType)
+            var occurrences = ProviderFinder.SearchForProviders(resolvedType, NullProgressIndicator.Create())
                 .Select(s => (IOccurrence)new ProvidedInOccurence(s))
                 .ToList();
 
