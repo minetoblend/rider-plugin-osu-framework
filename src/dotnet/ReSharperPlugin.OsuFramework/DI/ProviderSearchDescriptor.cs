@@ -15,4 +15,6 @@ public class ProviderSearchDescriptor(SearchRequest request, ICollection<IOccurr
 
     protected override Func<SearchRequest, IOccurrenceBrowserDescriptor> GetDescriptorFactory() =>
         request => new ProviderSearchDescriptor(request, request.Search());
+    
+    
 }

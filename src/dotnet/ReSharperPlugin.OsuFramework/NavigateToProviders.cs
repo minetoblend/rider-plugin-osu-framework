@@ -16,6 +16,8 @@ using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Search;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
+using ReSharperPlugin.OsuFramework.DI;
+using ReSharperPlugin.OsuFramework.Providers;
 
 namespace ReSharperPlugin.OsuFramework;
 
@@ -28,21 +30,16 @@ public class NavigateToProviders : INavigateFromHereProvider
         if (declaration == null)
             yield break;
 
-        var resolvedType = ProviderNavigator.GetProvidedType(declaration);
+        var resolvedType = declaration.GetProvidedType();
         if (resolvedType == null)
-            yield break;
-
-
-        var scope = declaration.GetPsiServices().Symbols.GetSymbolScope(LibrarySymbolScope.FULL, true);
-
-        var element = scope.GetTypeElementsByCLRName("osu.Framework.Allocation.CachedAttribute").FirstOrDefault();
-        if (element == null)
             yield break;
 
 
         yield return new ContextNavigation("Providers", null, NavigationActionGroup.Blessed, () =>
         {
-            var occurrences = ProviderNavigator.GetValueProviders(declaration, resolvedType).ToList();
+            var occurrences = ProviderFinder.SearchForProviders(resolvedType)
+                .Select(s => (IOccurrence)new ProvidedInOccurence(s))
+                .ToList();
 
             var solution = declaration.GetSolution();
 

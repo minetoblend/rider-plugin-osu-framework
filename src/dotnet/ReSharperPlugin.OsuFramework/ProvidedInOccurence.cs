@@ -1,31 +1,29 @@
+using System.Collections.Generic;
 using JetBrains.Annotations;
-using JetBrains.DocumentModel;
 using JetBrains.ReSharper.Feature.Services.Occurrences;
-using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.Psi.Resolve;
-using JetBrains.ReSharper.Psi.Tree;
+using ReSharperPlugin.OsuFramework.DI;
 
 namespace ReSharperPlugin.OsuFramework;
 
-public class ProvidedInOccurence : RangeOccurrence
+public class ProvidedInOccurence : ReferenceOccurrence
 {
-    public ProvidedInOccurence([NotNull] IPsiSourceFile sourceFile, DocumentRange documentRange, OccurrenceType occurrenceType, OccurrencePresentationOptions options) : base(sourceFile, documentRange, occurrenceType, options)
+    public ProvidedInOccurence([NotNull] ProvideInformation provideInformation, OccurrenceType occurrenceType = OccurrenceType.Occurrence) :
+        base(provideInformation.TreeNode, occurrenceType, calculateOccurrenceKinds(provideInformation))
     {
     }
 
-    public ProvidedInOccurence([NotNull] IReference reference, [CanBeNull] IDeclaredElement target, OccurrenceType occurrenceType) : base(reference, target, occurrenceType)
+    private static ICollection<OccurrenceKind> calculateOccurrenceKinds(ProvideInformation provideInformation)
     {
-    }
-
-    protected ProvidedInOccurence([NotNull] ITreeNode treeNode, OccurrenceType occurrenceKind) : base(treeNode, occurrenceKind)
-    {
-    }
-
-    protected ProvidedInOccurence([NotNull] IPsiSourceFile sourceFile, DocumentRange documentRange, OccurrencePresentationOptions options) : base(sourceFile, documentRange, options)
-    {
-    }
-
-    public ProvidedInOccurence([NotNull] IPsiSourceFile sourceFile, DocumentRange documentRange) : base(sourceFile, documentRange)
-    {
+        switch (provideInformation.Type)
+        {
+            case ProvideType.CachedAttribute:
+                return [OccurrenceKind.Attribute];
+            case ProvideType.CacheAs:
+                return [OccurrenceKind.DirectUsage];
+            case ProvideType.InheritedCachedAttribute:
+                return [OccurrenceKind.Attribute, OccurrenceKind.ExtendedType];
+            default:
+                return [OccurrenceKind.Other];
+        }
     }
 }
