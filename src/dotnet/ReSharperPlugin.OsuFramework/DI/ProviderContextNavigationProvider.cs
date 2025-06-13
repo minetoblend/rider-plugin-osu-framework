@@ -6,7 +6,6 @@ using JetBrains.Application.Parts;
 using JetBrains.Application.Threading;
 using JetBrains.Application.UI.Tooltips;
 using JetBrains.Lifetimes;
-using JetBrains.ReSharper.Feature.Services.ActionsMenu;
 using JetBrains.ReSharper.Feature.Services.Navigation.ContextNavigation;
 using JetBrains.ReSharper.Feature.Services.Occurrences;
 using JetBrains.TextControl;
@@ -19,14 +18,16 @@ namespace ReSharperPlugin.OsuFramework.Providers;
 
 [ContextNavigationProvider(Instantiation.DemandAnyThreadSafe)]
 public class ProviderContextNavigationProvider
-    : ContextNavigationProviderBase<ProviderContextSearch, ProviderSearchAction>, INavigateFromHereProvider,
-        IWorkflowProvider<ContextNavigation, NavigationActionGroup>
+    : ContextNavigationProviderBase<ProviderContextSearch, ProviderSearchAction>, INavigateFromHereProvider
 {
+    private readonly IShellLocks myLocks;
+    private readonly ITooltipManager myTooltipManager;
 
     public ProviderContextNavigationProvider(
-        IFeaturePartsContainer manager
-    ) : base(manager)
+        IFeaturePartsContainer manager, IShellLocks myLocks, ITooltipManager myTooltipManager) : base(manager)
     {
+        this.myLocks = myLocks;
+        this.myTooltipManager = myTooltipManager;
     }
 
     protected override string GetNavigationMenuTitle(IDataContext dataContext) => "Providers";
@@ -47,7 +48,7 @@ public class ProviderContextNavigationProvider
 
         if (occurrences.IsEmpty())
         {
-            // showToolTip(dataContext, "No providers found");
+            showToolTip(dataContext, "No providers found");
         }
         else
         {
@@ -60,5 +61,15 @@ public class ProviderContextNavigationProvider
                 request.Title
             );
         }
+    }
+
+    private void showToolTip(IDataContext dataContext, string tooltip)
+    {
+        ITextControl data = dataContext.GetData<ITextControl>(TextControlDataConstants.TEXT_CONTROL);
+        if (data != null)
+            myTooltipManager.ShowAtCaret((OuterLifetime)Lifetime.Eternal, (RichText)tooltip,
+                data, myLocks);
+        else
+            myTooltipManager.ShowIfPopupWindowContext(tooltip, dataContext);
     }
 }

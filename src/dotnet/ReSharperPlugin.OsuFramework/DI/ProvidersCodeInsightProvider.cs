@@ -58,23 +58,12 @@ public class ProvidersCodeInsightProvider(
     {
         if (element is not IProperty property) return 0;
 
-        int count = 0;
+        var type = property.GetResolvedType();
 
-        var types = new HashSet<IType>();
+        if (type == null)
+            return 0;
 
-        foreach (var attribute in property.GetAttributeInstances(ResolvedAttributeClrName, AttributesSource.Self))
-        {
-            var type = attribute.NamedParameter("Type").TypeValue
-                       ?? attribute.PositionParameter(0).TypeValue
-                       ?? property.Type;
-
-            if (!types.Add(type))
-                continue;
-
-            count += ProviderFinder.SearchForProviders(type, null).Count();
-        }
-
-        return count;
+        return ProviderFinder.SearchForProviders(type, null).Count();
     }
 
     private static readonly ClrTypeName ResolvedAttributeClrName = new("osu.Framework.Allocation.ResolvedAttribute");

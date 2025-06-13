@@ -6,90 +6,109 @@ using JetBrains.Metadata.Reader.Impl;
 using JetBrains.ReSharper.Feature.Services.CSharp.PredictiveDebugger;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Caches;
+using JetBrains.ReSharper.Psi.CSharp.Impl;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using JetBrains.ReSharper.Psi.Resolve;
 using JetBrains.ReSharper.Psi.Search;
+using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.Psi.Util;
+using JetBrains.Util;
 
 namespace ReSharperPlugin.OsuFramework.DI;
 
 public static class ProviderFinder
 {
     public static IEnumerable<ProviderEntry> SearchForProviders(
-        IType type,
-        [CanBeNull] IProgressIndicator progressIndicator
+        IType expectedType,
+        [CanBeNull] IProgressIndicator progressIndicator = null
     )
     {
-        var cacheAttrType = getCachedAttributeType(type.GetPsiServices());
+        progressIndicator ??= NullProgressIndicator.Create();
+
+        var cacheAttrType = getCachedAttributeType(expectedType.GetPsiServices());
 
         if (cacheAttrType == null)
             yield break;
 
-        var references = type.GetPsiServices().ParallelFinder.FindAllReferences(cacheAttrType);
+        IReference[] references;
+
+        using (var subProgress = progressIndicator.CreateSubProgress(1))
+            references = expectedType.GetPsiServices().ParallelFinder
+                .FindReferences(cacheAttrType, cacheAttrType.GetSearchDomain(), subProgress);
+
 
         foreach (var reference in references)
         {
-            var field = reference.GetTreeNode().FindParentOf<IFieldDeclaration>();
+            var attribute = reference.GetTreeNode().Parent as IAttribute;
+            if (attribute == null)
+                continue;
 
-            if (field?.DeclaredElement != null)
+            var declaration = attribute.FindParentOf<ICSharpDeclaration>();
+            if (declaration == null)
+                continue;
+
+            var attributeInstance = attribute.GetAttributeInstance();
+
+            if (attributeInstance.NamedParameter("Type").TypeValue?.Equals(expectedType) == true)
             {
-                var cachedAttributes =
-                    field.DeclaredElement.GetAttributeInstances(CachedAttributeClrName, AttributesSource.Self);
-
-                foreach (var attribute in cachedAttributes)
-                {
-                    var providedType = attribute.NamedParameter("Type").TypeValue
-                                       ?? attribute.PositionParameter(0).TypeValue
-                                       ?? field.Type;
-
-                    if (providedType.Equals(type))
-                        yield return new ProviderEntry(field);
-                }
+                yield return new ProviderEntry(attribute);
+                continue;
             }
 
-            var property = reference.GetTreeNode().FindParentOf<IPropertyDeclaration>();
-
-            if (property?.DeclaredElement != null)
+            if (attributeInstance.PositionParameter(0).TypeValue?.Equals(expectedType) == true)
             {
-                var cachedAttributes =
-                    property.DeclaredElement.GetAttributeInstances(CachedAttributeClrName, AttributesSource.Self);
-
-                foreach (var attribute in cachedAttributes)
-                {
-                    var providedType = attribute.NamedParameter("Type").TypeValue
-                                       ?? attribute.PositionParameter(0).TypeValue
-                                       ?? property.Type;
-
-                    if (providedType.Equals(type))
-                        yield return new ProviderEntry(property);
-                }
+                yield return new ProviderEntry(attribute);
+                continue;
             }
 
-            var classDeclaration = reference.GetTreeNode().FindParentOf<IClassDeclaration>();
-
-            if (classDeclaration?.DeclaredElement != null)
+            var declarationType = declaration switch
             {
-                var cachedAttributes =
-                    classDeclaration.DeclaredElement.GetAttributeInstances(CachedAttributeClrName,
-                        AttributesSource.Self);
+                IPropertyDeclaration property => property.Type,
+                IFieldDeclaration field => field.Type,
+                IClassDeclaration clazz => clazz.DeclaredElement.Type(),
+                _ => null
+            };
 
-                foreach (var attribute in cachedAttributes)
-                {
-                    var providedType = attribute.NamedParameter("Type").TypeValue
-                                       ?? attribute.PositionParameter(0).TypeValue
-                                       ?? classDeclaration.DeclaredElement.Type();
+            if (declarationType?.Equals(expectedType) == true)
+                yield return new ProviderEntry(attribute);
+        }
 
-                    if (providedType?.Equals(type) == true)
-                        yield return new ProviderEntry(classDeclaration);
-                }
+        var scope = expectedType.GetPsiServices().Symbols.GetSymbolScope(LibrarySymbolScope.FULL, true);
+
+        var dependencyContainerType = GetDependencyContainerType(scope);
+
+        var cacheAsMethods = dependencyContainerType.Methods.Where(
+                method => method.ShortName == "CacheAs" && method.TypeParametersCount == 1)
+            .ToList();
+
+        var searchDomain = cacheAsMethods.FirstOrDefault()?.GetSearchDomain();
+
+        if (searchDomain != null)
+        {
+            using (var subProcess = progressIndicator.CreateSubProgress(1))
+                references = expectedType.GetPsiServices().ParallelFinder
+                    .FindReferences(cacheAsMethods, searchDomain, subProcess);
+
+            foreach (var invocation in references.SelectNotNull(it =>
+                         it.GetTreeNode().FindParentOf<IInvocationExpression>()))
+            {
+                var argumentType =
+                    invocation.TypeArguments.FirstOrDefault()?.ToIType() ??
+                    invocation.Arguments.FirstOrDefault()?.Value?.Type();
+
+                if (argumentType?.Equals(expectedType) == true)
+                    yield return new ProviderEntry(invocation);
             }
         }
     }
 
-    public readonly record struct ProviderEntry(ICSharpDeclaration Declaration);
+    public readonly record struct ProviderEntry(ITreeNode Usage);
 
     private static readonly ClrTypeName CachedAttributeClrName = new("osu.Framework.Allocation.CachedAttribute");
 
     private static readonly ClrTypeName ResolvedAttributeClrName = new("osu.Framework.Allocation.ResolvedAttribute");
+
+    public static readonly ClrTypeName DependencyContainerClrName = new("osu.Framework.Allocation.DependencyContainer");
 
     [CanBeNull]
     private static ITypeElement getCachedAttributeType(IPsiServices psiServices) =>
@@ -100,4 +119,7 @@ public static class ProviderFinder
     private static ITypeElement getResolvedAttributeType(IPsiServices psiServices) =>
         psiServices.Symbols.GetSymbolScope(LibrarySymbolScope.FULL, true)
             .GetTypeElementsByCLRName(CachedAttributeClrName).FirstOrDefault();
+
+    private static ITypeElement GetDependencyContainerType(ISymbolScope scope) =>
+        scope.GetTypeElementsByCLRName(DependencyContainerClrName).FirstOrDefault();
 }

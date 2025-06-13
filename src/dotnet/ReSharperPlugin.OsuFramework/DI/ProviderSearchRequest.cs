@@ -14,11 +14,13 @@ namespace ReSharperPlugin.OsuFramework.DI;
 
 public sealed class ProviderSearchRequest(ProviderSearchContext context) : SearchRequest
 {
+    DeclaredElementEnvoy<IDeclaredElement> target = new DeclaredElementEnvoy<IDeclaredElement>(context.Target.DeclaredElement);
+    
     public override ICollection<IOccurrence> Search(IProgressIndicator progressIndicator)
     {
         return ProviderFinder.SearchForProviders(context.Type, progressIndicator)
-            .SelectNotNull(s => s.Declaration.DeclaredElement)
-            .Select(s => (IOccurrence)new DeclaredElementOccurrence(s))
+            .SelectNotNull(s => s.Usage)
+            .Select(s => (IOccurrence)new ReferenceOccurrence(s, OccurrenceType.Occurrence))
             .ToList();
     }
 
