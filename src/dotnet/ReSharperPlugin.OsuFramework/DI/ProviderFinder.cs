@@ -74,7 +74,7 @@ public static class ProviderFinder
             if (!providedType.Equals(expectedType))
                 continue;
 
-            yield return new ProvideInformation(attribute, ProvideType.CacheAs)
+            yield return new ProvideInformation(attribute, ProvideType.CachedAttribute)
             {
                 Explicit = isExplicit,
                 Declaration = declaration,

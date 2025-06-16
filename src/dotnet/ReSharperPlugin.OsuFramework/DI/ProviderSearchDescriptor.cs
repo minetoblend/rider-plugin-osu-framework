@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using JetBrains.Application.UI.TreeModels;
 using JetBrains.ReSharper.Feature.Services.Navigation.Descriptors;
 using JetBrains.ReSharper.Feature.Services.Navigation.Requests;
 using JetBrains.ReSharper.Feature.Services.Occurrences;

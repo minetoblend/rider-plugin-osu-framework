@@ -26,6 +26,7 @@ public class ProvidedInOccurrence : ReferenceOccurrence
                 };
                 break;
             case ProvideType.CacheAs:
+            case ProvideType.CachedAttribute:
                 PresentationOptions = new OccurrencePresentationOptions
                 {
                     TextDisplayStyle = TextDisplayStyle.IdentifierAndContext,
