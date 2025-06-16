@@ -9,8 +9,6 @@ using JetBrains.ReSharper.Feature.Services.Navigation.ContextNavigation;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using JetBrains.ReSharper.Psi.Tree;
-using ReSharperPlugin.OsuFramework.DI;
 
 namespace ReSharperPlugin.OsuFramework.DI;
 
