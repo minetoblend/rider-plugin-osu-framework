@@ -11,7 +11,7 @@ using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.Psi.Util;
 
-namespace ReSharperPlugin.OsuFramework.Providers;
+namespace ReSharperPlugin.OsuFramework.DI;
 
 public static class ProviderTypeUtils
 {

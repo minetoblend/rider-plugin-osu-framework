@@ -20,7 +20,7 @@ using JetBrains.UI.RichText;
 using JetBrains.Util;
 using ReSharperPlugin.OsuFramework.DI;
 
-namespace ReSharperPlugin.OsuFramework.Providers;
+namespace ReSharperPlugin.OsuFramework.DI;
 
 [ContextNavigationProvider(Instantiation.DemandAnyThreadSafe)]
 public class ProviderContextNavigationProvider

@@ -1,16 +1,13 @@
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using JetBrains.Application.Progress;
 using JetBrains.Application.UI.TreeModels;
 using JetBrains.IDE.TreeBrowser;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.Occurrences;
 using JetBrains.ReSharper.Feature.Services.Tree;
-using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Resources.Shell;
 
-namespace ReSharperPlugin.OsuFramework;
+namespace ReSharperPlugin.OsuFramework.DI;
 
 public sealed class ProvidedInOccurenceBrowserDescriptor : OccurrenceBrowserDescriptor
 {

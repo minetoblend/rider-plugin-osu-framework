@@ -1,6 +1,5 @@
 using JetBrains.Application.Parts;
 using JetBrains.Application.UI.Controls.JetPopupMenu;
-using JetBrains.Application.UI.Icons.CommonThemedIcons;
 using JetBrains.ReSharper.Feature.Services.Occurrences;
 using JetBrains.ReSharper.Feature.Services.Presentation;
 using JetBrains.ReSharper.Feature.Services.Resources;

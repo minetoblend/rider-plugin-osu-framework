@@ -19,7 +19,7 @@ using JetBrains.Rider.Model;
 using JetBrains.UI.Icons;
 using ReSharperPlugin.OsuFramework.DI;
 
-namespace ReSharperPlugin.OsuFramework.Providers;
+namespace ReSharperPlugin.OsuFramework.DI;
 
 [ShellComponent(Instantiation.DemandAnyThreadSafe)]
 [HighlightingSource]

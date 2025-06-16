@@ -7,10 +7,8 @@ using JetBrains.ReSharper.Feature.Services.CSharp.PredictiveDebugger;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Caches;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using JetBrains.ReSharper.Psi.Resolve;
 using JetBrains.ReSharper.Psi.Search;
 using JetBrains.Util;
-using ReSharperPlugin.OsuFramework.Providers;
 
 namespace ReSharperPlugin.OsuFramework.DI;
 
