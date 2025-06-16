@@ -8,6 +8,8 @@
 
 A rider plugin for [osu-framework](https://github.com/ppy/osu-framework/).
 
+Mainly just an experiment for now cuz I want to learn the rider plugin sdk.
+
 Todo-list:
 - [x] Navigate to `[Cached]` and `dependencies.CacheAs()` calls for the type of a `[Resolved]` property.
 - [ ] Navigate to `[Resolved]` properties for the type of a `[Cached]` property/class or `dependencies.CacheAs()`.
