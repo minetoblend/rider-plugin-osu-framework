@@ -8,7 +8,6 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Caches;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Util;
-using ReSharperPlugin.OsuFramework.Providers;
 
 namespace ReSharperPlugin.OsuFramework.DI;
 
@@ -30,8 +29,6 @@ public class ResolvedTypeUsageAnalyzer : ElementProblemAnalyzer<ICreationExpress
             ? TypeFactory.CreateType(drawableTypeElement)
             : null;
 
-        drawableTypeElement.GetResolvedType();
-
 
         if (drawableType == null || !type.IsSubtypeOf(drawableType))
             return;
@@ -44,6 +41,19 @@ public class ResolvedTypeUsageAnalyzer : ElementProblemAnalyzer<ICreationExpress
         if (clazz == null)
             return;
 
+        ExtractResolvedTypes(clazz, resolvedTypes, drawableType);
+
+        if (resolvedTypes.Count > 0)
+        {
+            var text = resolvedTypes.Count == 1 ? "1 resolved type" : $"{resolvedTypes.Count} resolved types";
+
+            consumer.AddHighlighting(new DefaultInterLineAdornmentHighlighting(element.GetHighlightingRange(), text,
+                string.Join(", ", resolvedTypes.Select(s => s.GetPresentableName(element.Language)))));
+        }
+    }
+
+    private static void ExtractResolvedTypes(IClass clazz, HashSet<IType> resolvedTypes, IDeclaredType drawableType)
+    {
         foreach (var property in clazz.Properties)
         {
             var resolvedType = property.GetResolvedType();
@@ -65,13 +75,12 @@ public class ResolvedTypeUsageAnalyzer : ElementProblemAnalyzer<ICreationExpress
             }
         }
 
-        if (resolvedTypes.Count > 0)
-        {
-            var text = resolvedTypes.Count == 1 ? "1 resolved type" : $"{resolvedTypes.Count} resolved types";
 
-            consumer.AddHighlighting(new DefaultInterLineAdornmentHighlighting(element.GetHighlightingRange(), text,
-                string.Join(", ", resolvedTypes.Select(s => s.GetPresentableName(element.Language)))));
-        }
+        var superClass = clazz.GetSuperClass();
+        var baseClass = clazz.GetBaseClassType();
+        
+        if (baseClass?.IsSubtypeOf(drawableType) == true)
+            ExtractResolvedTypes(superClass, resolvedTypes, drawableType);
     }
 
     private static readonly ClrTypeName DrawableClrName =
