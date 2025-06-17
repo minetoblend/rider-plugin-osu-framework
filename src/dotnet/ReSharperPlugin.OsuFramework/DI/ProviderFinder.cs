@@ -16,16 +16,16 @@ namespace ReSharperPlugin.OsuFramework.DI;
 
 public static class ProviderFinder
 {
-    private static readonly ClrTypeName CachedAttributeClrName =
+    public static readonly ClrTypeName CachedAttributeClrName =
         new("osu.Framework.Allocation.CachedAttribute");
 
-    private static readonly ClrTypeName ResolvedAttributeClrName =
+    public static readonly ClrTypeName ResolvedAttributeClrName =
         new("osu.Framework.Allocation.ResolvedAttribute");
 
-    private static readonly ClrTypeName DependencyContainerClrName =
+    public static readonly ClrTypeName DependencyContainerClrName =
         new("osu.Framework.Allocation.DependencyContainer");
 
-    private static readonly ClrTypeName BackgroundDependencyLoaderAttributeClrName =
+    public static readonly ClrTypeName BackgroundDependencyLoaderAttributeClrName =
         new("osu.Framework.Allocation.BackgroundDependencyLoaderAttribute");
 
 
@@ -158,12 +158,12 @@ public static class ProviderFinder
     [CanBeNull]
     private static ITypeElement getResolvedAttributeType(IPsiServices psiServices) =>
         psiServices.Symbols.GetSymbolScope(LibrarySymbolScope.FULL, true)
-            .GetTypeElementsByCLRName(CachedAttributeClrName).FirstOrDefault();
+            .GetTypeElementsByCLRName(ResolvedAttributeClrName).FirstOrDefault();
 
     [CanBeNull]
     private static ITypeElement getBackgroundDependencyLoaderAttributeType(IPsiServices psiServices) =>
         psiServices.Symbols.GetSymbolScope(LibrarySymbolScope.FULL, true)
-            .GetTypeElementsByCLRName(CachedAttributeClrName).FirstOrDefault();
+            .GetTypeElementsByCLRName(BackgroundDependencyLoaderAttributeClrName).FirstOrDefault();
 
     [CanBeNull]
     private static ITypeElement getDependencyContainerType(IPsiServices psiServices) =>
