@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using JetBrains.Application.DataContext;
@@ -7,20 +6,13 @@ using JetBrains.Application.Parts;
 using JetBrains.Application.Progress;
 using JetBrains.Application.UI.DataContext;
 using JetBrains.ProjectModel;
-using JetBrains.ReSharper.Feature.Services.CSharp.CompleteStatement;
-using JetBrains.ReSharper.Feature.Services.CSharp.PredictiveDebugger;
 using JetBrains.ReSharper.Feature.Services.Navigation.ContextNavigation;
 using JetBrains.ReSharper.Feature.Services.Navigation.ExecutionHosting;
 using JetBrains.ReSharper.Feature.Services.Occurrences;
-using JetBrains.ReSharper.Psi.Caches;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using JetBrains.ReSharper.Psi.Search;
 using JetBrains.ReSharper.Psi.Tree;
-using JetBrains.Util;
-using ReSharperPlugin.OsuFramework.DI;
-using ReSharperPlugin.OsuFramework.Providers;
 
-namespace ReSharperPlugin.OsuFramework;
+namespace ReSharperPlugin.OsuFramework.DI;
 
 [ContextNavigationProvider(Instantiation.DemandAnyThreadSafe)]
 public class NavigateToProviders : INavigateFromHereProvider

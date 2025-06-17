@@ -6,9 +6,6 @@ using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.Navigation.Requests;
 using JetBrains.ReSharper.Feature.Services.Occurrences;
 using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.Psi.Tree;
-using JetBrains.ReSharper.Refactorings.WorkflowNew;
-using JetBrains.Util;
 
 namespace ReSharperPlugin.OsuFramework.DI;
 

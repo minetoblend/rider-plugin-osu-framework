@@ -7,20 +7,15 @@ using JetBrains.Application.Parts;
 using JetBrains.Application.Threading;
 using JetBrains.Application.UI.Tooltips;
 using JetBrains.Lifetimes;
-using JetBrains.ProjectModel;
 using JetBrains.ProjectModel.DataContext;
-using JetBrains.ReSharper.Feature.Services.Navigation;
 using JetBrains.ReSharper.Feature.Services.Navigation.ContextNavigation;
 using JetBrains.ReSharper.Feature.Services.Occurrences;
-using JetBrains.ReSharper.Feature.Services.Tree;
-using JetBrains.ReSharper.Features.Navigation.Features.FindExtensions;
 using JetBrains.TextControl;
 using JetBrains.TextControl.DataContext;
 using JetBrains.UI.RichText;
 using JetBrains.Util;
-using ReSharperPlugin.OsuFramework.DI;
 
-namespace ReSharperPlugin.OsuFramework.Providers;
+namespace ReSharperPlugin.OsuFramework.DI;
 
 [ContextNavigationProvider(Instantiation.DemandAnyThreadSafe)]
 public class ProviderContextNavigationProvider

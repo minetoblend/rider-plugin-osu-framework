@@ -8,7 +8,6 @@ using JetBrains.Application.Progress;
 using JetBrains.Application.UI.Actions.ActionManager;
 using JetBrains.IDE.UI;
 using JetBrains.Metadata.Reader.Impl;
-using JetBrains.ProjectModel;
 using JetBrains.RdBackend.Common.Features.CodeInsights.Providers;
 using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Daemon.UsageChecking;
@@ -17,9 +16,8 @@ using JetBrains.ReSharper.Feature.Services.Resources;
 using JetBrains.ReSharper.Psi;
 using JetBrains.Rider.Model;
 using JetBrains.UI.Icons;
-using ReSharperPlugin.OsuFramework.DI;
 
-namespace ReSharperPlugin.OsuFramework.Providers;
+namespace ReSharperPlugin.OsuFramework.DI;
 
 [ShellComponent(Instantiation.DemandAnyThreadSafe)]
 [HighlightingSource]

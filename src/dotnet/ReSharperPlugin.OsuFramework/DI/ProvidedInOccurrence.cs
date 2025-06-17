@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.Feature.Services.Occurrences;
-using ReSharperPlugin.OsuFramework.DI;
 
-namespace ReSharperPlugin.OsuFramework;
+namespace ReSharperPlugin.OsuFramework.DI;
 
 public class ProvidedInOccurrence : ReferenceOccurrence
 {
@@ -26,6 +25,7 @@ public class ProvidedInOccurrence : ReferenceOccurrence
                 };
                 break;
             case ProvideType.CacheAs:
+            case ProvideType.CachedAttribute:
                 PresentationOptions = new OccurrencePresentationOptions
                 {
                     TextDisplayStyle = TextDisplayStyle.IdentifierAndContext,
